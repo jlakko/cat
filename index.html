@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Cat Photos</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .cat-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        #cat-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        #random-cat-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        #random-cat-btn:hover {
+            background-color: #45a049;
+        }
+        
+        #random-cat-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        .loading {
+            color: #666;
+            font-style: italic;
+            margin-top: 10px;
+        }
+        
+        .error {
+            color: #d32f2f;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🐱 Random Cat Photos</h1>
+    
+    <div class="cat-container">
+        <img id="cat-image" src="https://cataas.com/cat" alt="A cute cat" />
+    </div>
+    
+    <button id="random-cat-btn">Get Another Random Cat! 🎲</button>
+    <div id="status-message"></div>
+    
+    <script>
+        const catImage = document.getElementById('cat-image');
+        const randomCatBtn = document.getElementById('random-cat-btn');
+        const statusMessage = document.getElementById('status-message');
+        
+        function showLoading() {
+            randomCatBtn.disabled = true;
+            statusMessage.innerHTML = '<div class="loading">Loading a new cat...</div>';
+        }
+        
+        function hideLoading() {
+            randomCatBtn.disabled = false;
+            statusMessage.innerHTML = '';
+        }
+        
+        function showError() {
+            statusMessage.innerHTML = '<div class="error">Oops! Could not load a cat photo. Please try again.</div>';
+        }
+        
+        function getRandomCat() {
+            showLoading();
+            
+            // Add a timestamp to prevent caching and ensure we get a different cat
+            const timestamp = new Date().getTime();
+            const newImageUrl = `https://cataas.com/cat?timestamp=${timestamp}`;
+            
+            // Create a new image to test if it loads successfully
+            const tempImage = new Image();
+            
+            tempImage.onload = function() {
+                catImage.src = newImageUrl;
+                hideLoading();
+            };
+            
+            tempImage.onerror = function() {
+                showError();
+                hideLoading();
+            };
+            
+            tempImage.src = newImageUrl;
+        }
+        
+        // Add click event listener to the button
+        randomCatBtn.addEventListener('click', getRandomCat);
+        
+        // Add some loading feedback for the initial image
+        catImage.addEventListener('load', function() {
+            hideLoading();
+        });
+        
+        catImage.addEventListener('error', function() {
+            showError();
+            hideLoading();
+        });
+    </script>
+</body>
+</html>
